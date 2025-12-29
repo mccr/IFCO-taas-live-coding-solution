@@ -5,11 +5,11 @@
 ### Requirements
 - Docker & Docker Compose
 - JDK 21
-- Gradle (optional — the project includes `./gradlew`)
+- Maven (optional — the project includes `./mvnw`)
 
 
 ### Scripts
 
 - Run the project `docker-compose up -d`
-- Start application `./gradlew bootRun`
-- Run all tests with: `./gradlew test`
+- Start application `./mvnw spring-boot:run`
+- Run all tests with: `./mvnw test`
