@@ -6,8 +6,8 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,35 +22,11 @@ public class DeviceStatusService {
 
     @Transactional
     public void updateLatestStatus(Telemetry telemetry) {
-        String deviceId = telemetry.getDeviceId();
-        Optional<DeviceStatus> status = repository.findById(deviceId);
-
-        if (status.isPresent()) {
-            DeviceStatus existingStatus = status.get();
-            if (telemetry.getDate().isAfter(existingStatus.getLatestDate())) {
-                log.info("Updating device status for {}", telemetry.getDeviceId());
-
-                existingStatus.setLatestMeasurement(telemetry.getMeasurement());
-                existingStatus.setLatestDate(telemetry.getDate());
-
-                repository.save(existingStatus);
-            } else if (telemetry.getDate().equals(existingStatus.getLatestDate())) {
-                log.warn("Duplicate telemetry detected for device {} at {}",
-                        deviceId, telemetry.getDate());
-            } else {
-                log.warn("Old telemetry data for device {}. Received: {}, Latest: {}",
-                        deviceId, telemetry.getDate(), existingStatus.getLatestDate());
-            }
-        } else {
-            log.info("Creating new device status for {}", deviceId);
-
-            DeviceStatus newDeviceStatus = new DeviceStatus();
-            newDeviceStatus.setDeviceId(telemetry.getDeviceId());
-            newDeviceStatus.setLatestMeasurement(telemetry.getMeasurement());
-            newDeviceStatus.setLatestDate(telemetry.getDate());
-
-            repository.save(newDeviceStatus);
-        }
+        repository.findById(telemetry.getDeviceId())
+                .ifPresentOrElse(
+                        existingStatus -> updateExistingStatus(existingStatus, telemetry),
+                        () -> createDeviceStatus(telemetry)
+                );
     }
 
     public List<DeviceStatusResponse> getAllDeviceStatuses() {
@@ -58,5 +34,44 @@ public class DeviceStatusService {
                 .stream()
                 .map(DeviceStatusResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    private void updateExistingStatus(DeviceStatus existingStatus, Telemetry telemetry) {
+        String deviceId = telemetry.getDeviceId();
+        Instant receivedDate = telemetry.getDate();
+        Instant latestDate = existingStatus.getLatestDate();
+
+        int comparison = receivedDate.compareTo(latestDate);
+
+        if (comparison > 0) {
+            updateDeviceStatus(existingStatus, telemetry);
+        } else if (comparison == 0) {
+            log.warn("Duplicate telemetry detected for device {} at {}",
+                    deviceId, telemetry.getDate());
+        } else {
+            log.warn("Old telemetry data for device {}. Received: {}, Latest: {}",
+                    deviceId, telemetry.getDate(), existingStatus.getLatestDate());
+        }
+    }
+
+    private void updateDeviceStatus(DeviceStatus status, Telemetry telemetry) {
+        log.info("Updating device status for device: {}", telemetry.getDeviceId());
+
+        status.setLatestMeasurement(telemetry.getMeasurement());
+        status.setLatestDate(telemetry.getDate());
+
+        repository.save(status);
+    }
+
+    private void createDeviceStatus(Telemetry telemetry) {
+        log.info("Creating new device status for device: {}", telemetry.getDeviceId());
+
+        DeviceStatus newStatus = DeviceStatus.builder()
+                .deviceId(telemetry.getDeviceId())
+                .latestMeasurement(telemetry.getMeasurement())
+                .latestDate(telemetry.getDate())
+                .build();
+
+        repository.save(newStatus);
     }
 }
