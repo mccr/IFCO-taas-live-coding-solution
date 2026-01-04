@@ -1,6 +1,6 @@
 package com.ifco.taas.application.service;
 
-import com.ifco.taas.application.MessagePublisher;
+import com.ifco.taas.application.messaging.MessagePublisher;
 import com.ifco.taas.application.repository.TelemetryRepository;
 import com.ifco.taas.application.usecase.RecordTelemetryUseCase;
 import com.ifco.taas.domain.Telemetry;

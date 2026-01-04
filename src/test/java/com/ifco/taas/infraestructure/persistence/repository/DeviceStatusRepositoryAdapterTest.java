@@ -1,8 +1,8 @@
 package com.ifco.taas.infraestructure.persistence.repository;
 
-import com.ifco.taas.domain.Telemetry;
-import com.ifco.taas.infraestructure.persistence.entity.TelemetryEntity;
-import com.ifco.taas.infraestructure.persistence.mapper.TelemetryMapper;
+import com.ifco.taas.domain.DeviceStatus;
+import com.ifco.taas.infraestructure.persistence.entity.DeviceStatusEntity;
+import com.ifco.taas.infraestructure.persistence.mapper.DeviceStatusMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,58 +17,55 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TelemetryRepositoryAdapterTest {
+public class DeviceStatusRepositoryAdapterTest {
 
     @Mock
-    private TelemetryJpaRepository jpaRepository;
+    private DeviceStatusJpaRepository jpaRepository;
 
     @Mock
-    private TelemetryMapper mapper;
+    private DeviceStatusMapper mapper;
 
     @InjectMocks
-    private TelemetryRepositoryAdapter adapter;
+    private DeviceStatusRepositoryAdapter adapter;
 
     @Test
-    void shouldConvertAndSaveTelemetry() {
-        Long id = 1L;
+    void shouldConvertAndSaveDeviceStatus() {
         String deviceId = "1";
         Double measurement = 25.5;
         Instant date = Instant.parse("2025-01-31T13:00:00Z");
-        LocalDateTime createdAt = LocalDateTime.now();
+        LocalDateTime updatedAt = LocalDateTime.now();
 
-        Telemetry domain = Telemetry.builder()
+        DeviceStatus domain = DeviceStatus.builder()
                 .deviceId(deviceId)
-                .measurement(measurement)
-                .date(date)
+                .latestMeasurement(measurement)
+                .latestDate(date)
                 .build();
 
-        TelemetryEntity entity = TelemetryEntity.builder()
+        DeviceStatusEntity entity = DeviceStatusEntity.builder()
                 .deviceId(deviceId)
-                .measurement(measurement)
-                .date(date)
+                .latestMeasurement(measurement)
+                .latestDate(date)
                 .build();
 
-        TelemetryEntity savedEntity = TelemetryEntity.builder()
-                .id(id)
+        DeviceStatus savedDomain = DeviceStatus.builder()
                 .deviceId(deviceId)
-                .measurement(measurement)
-                .date(date)
-                .createdAt(createdAt)
+                .latestMeasurement(measurement)
+                .latestDate(date)
+                .updatedAt(updatedAt)
                 .build();
 
-        Telemetry savedDomain = Telemetry.builder()
-                .id(id)
+        DeviceStatusEntity savedEntity = DeviceStatusEntity.builder()
                 .deviceId(deviceId)
-                .measurement(measurement)
-                .date(date)
-                .createdAt(createdAt)
+                .latestMeasurement(measurement)
+                .latestDate(date)
+                .updatedAt(updatedAt)
                 .build();
 
         when(mapper.toEntity(domain)).thenReturn(entity);
         when(jpaRepository.save(entity)).thenReturn(savedEntity);
         when(mapper.toDomain(savedEntity)).thenReturn(savedDomain);
 
-        Telemetry result = adapter.save(domain);
+        DeviceStatus result = adapter.save(domain);
 
         assertThat(result).isNotNull();
         verify(mapper).toEntity(domain);

@@ -1,7 +1,6 @@
-package com.ifco.taas.device;
+package com.ifco.taas.application.service;
 
 import com.ifco.taas.application.repository.DeviceStatusRepository;
-import com.ifco.taas.application.service.DeviceStatusService;
 import com.ifco.taas.domain.DeviceStatus;
 import com.ifco.taas.domain.Telemetry;
 import com.ifco.taas.infraestructure.rest.dto.DeviceStatusResponse;
@@ -61,7 +60,7 @@ public class DeviceStatusServiceTest {
     void shouldUpdateLatestStatusIfExisting() {
         when(repository.findById(deviceID)).thenReturn(Optional.of(existingDeviceStatus));
 
-        service.updateLatestStatus(telemetry);
+        service.updateFrom(telemetry);
 
         existingDeviceStatus.setLatestMeasurement(latestMeasurement);
         existingDeviceStatus.setLatestDate(latestDate);
@@ -75,7 +74,7 @@ public class DeviceStatusServiceTest {
 
         when(repository.findById(deviceID)).thenReturn(Optional.of(existingDeviceStatus));
 
-        service.updateLatestStatus(telemetry);
+        service.updateFrom(telemetry);
 
         verify(repository, never()).save(any(DeviceStatus.class));
     }
@@ -87,7 +86,7 @@ public class DeviceStatusServiceTest {
 
         when(repository.findById(deviceID)).thenReturn(Optional.of(existingDeviceStatus));
 
-        service.updateLatestStatus(telemetry);
+        service.updateFrom(telemetry);
 
         verify(repository, never()).save(existingDeviceStatus);
     }
@@ -96,7 +95,7 @@ public class DeviceStatusServiceTest {
     void shouldCreateLatestStatusIfNoExistingData() {
         when(repository.findById(deviceID)).thenReturn(Optional.empty());
 
-        service.updateLatestStatus(telemetry);
+        service.updateFrom(telemetry);
 
         DeviceStatus deviceStatusSaved = DeviceStatus.builder()
                 .deviceId(deviceID)
