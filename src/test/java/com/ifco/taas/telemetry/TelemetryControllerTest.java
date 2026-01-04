@@ -40,10 +40,11 @@ public class TelemetryControllerTest {
         measurement = 25.5;
         date = "2025-01-31T13:00:00Z";
 
-        request = new TelemetryRequest();
-        request.setDeviceId(deviceId);
-        request.setMeasurement(measurement);
-        request.setDate(date);
+        request = TelemetryRequest.builder()
+                .deviceId(deviceId)
+                .measurement(measurement)
+                .date(date)
+                .build();
     }
 
     @Test

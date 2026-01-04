@@ -35,10 +35,11 @@ class TelemetryServiceTest {
         Double measurement = 25.5;
         String date = "2025-01-31T13:00:00Z";
 
-        TelemetryRequest request = new TelemetryRequest();
-        request.setDeviceId(deviceId);
-        request.setMeasurement(measurement);
-        request.setDate(date);
+        TelemetryRequest request = TelemetryRequest.builder()
+                .deviceId(deviceId)
+                .measurement(measurement)
+                .date(date)
+                .build();
 
         Telemetry savedTelemetry = Telemetry.builder()
                 .deviceId(deviceId)
