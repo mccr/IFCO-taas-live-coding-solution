@@ -73,7 +73,7 @@ would be having a unique constraint in the DB and handling it as an error.
 
 ## Bonus points
 
-1. Using Hexagonal Architecture or any similar (Onion, Clean, etc.)
+1. Using Hexagonal Architecture or any similar (Onion, Clean, etc.) ✅
 2. Using CQRS: Command + CommandHandlers / Query + QueryHandlers
 3. Using PostgreSQL for storing the telemetry and the projection ✅
 4. Using Kafka as messaging system ✅
@@ -83,5 +83,3 @@ would be having a unique constraint in the DB and handling it as an error.
 ## Improvements
 
 - Error handling can be improved to catch explicit exceptions.
-- DeviceStatusService can be improved by breaking down the responsibilities that updateLatestStatus has.
-- Use builder patter for object creation.
