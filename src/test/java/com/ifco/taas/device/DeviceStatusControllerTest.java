@@ -31,8 +31,18 @@ public class DeviceStatusControllerTest {
 
     @Test
     void shouldGetAllDeviceStatusesSuccessfully() throws Exception {
-        DeviceStatusResponse deviceStatus1 = new DeviceStatusResponse("1", 25.5, Instant.parse("2025-01-31T13:00:00Z"), LocalDateTime.now());
-        DeviceStatusResponse deviceStatus2 = new DeviceStatusResponse("2", 10.4, Instant.parse("2025-01-30T11:00:00Z"), LocalDateTime.now());
+        DeviceStatusResponse deviceStatus1 = DeviceStatusResponse.builder()
+                .deviceId("1")
+                .latestMeasurement(25.5)
+                .latestDate(Instant.parse("2025-01-31T13:00:00Z"))
+                .updatedAt(LocalDateTime.now())
+                .build();
+        DeviceStatusResponse deviceStatus2 = DeviceStatusResponse.builder()
+                .deviceId("2")
+                .latestMeasurement(10.4)
+                .latestDate(Instant.parse("2025-01-30T11:00:00Z"))
+                .updatedAt(LocalDateTime.now())
+                .build();
         List<DeviceStatusResponse> statuses = List.of(deviceStatus1, deviceStatus2);
 
         when(service.getAllDeviceStatuses()).thenReturn(statuses);
