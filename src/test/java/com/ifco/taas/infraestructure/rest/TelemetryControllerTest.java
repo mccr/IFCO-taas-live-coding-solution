@@ -1,7 +1,9 @@
-package com.ifco.taas.telemetry;
+package com.ifco.taas.infraestructure.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ifco.taas.telemetry.dto.TelemetryRequest;
+import com.ifco.taas.application.usecase.RecordTelemetryUseCase;
+import com.ifco.taas.domain.Telemetry;
+import com.ifco.taas.infraestructure.rest.dto.TelemetryRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,7 +28,7 @@ public class TelemetryControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private TelemetryService service;
+    private RecordTelemetryUseCase useCase;
 
     private String deviceId;
     private Double measurement;
@@ -55,7 +56,7 @@ public class TelemetryControllerTest {
                 .date(Instant.parse(date))
                 .build();
 
-        when(service.recordTelemetry(any(TelemetryRequest.class))).thenReturn(telemetry);
+        when(useCase.record(deviceId, measurement, Instant.parse(date))).thenReturn(telemetry);
 
         mockMvc.perform(post("/telemetry")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -63,12 +64,13 @@ public class TelemetryControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.deviceId").value("1"))
-                .andExpect(jsonPath("$.measurement").value(25.5));
+                .andExpect(jsonPath("$.measurement").value(25.5))
+                .andExpect(jsonPath("$.date").value("2025-01-31T13:00:00Z"));
     }
 
     @Test
     void shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
-        when(service.recordTelemetry(any(TelemetryRequest.class)))
+        when(useCase.record(deviceId, measurement, Instant.parse(date)))
                 .thenThrow(new RuntimeException("Database connection failed"));
 
         mockMvc.perform(post("/telemetry")

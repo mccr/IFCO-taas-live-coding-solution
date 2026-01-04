@@ -1,6 +1,8 @@
 package com.ifco.taas.device;
 
-import com.ifco.taas.device.dto.DeviceStatusResponse;
+import com.ifco.taas.application.service.DeviceStatusService;
+import com.ifco.taas.infraestructure.rest.DeviceStatusController;
+import com.ifco.taas.infraestructure.rest.dto.DeviceStatusResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

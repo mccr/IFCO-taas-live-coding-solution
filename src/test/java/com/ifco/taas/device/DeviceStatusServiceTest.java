@@ -1,7 +1,10 @@
 package com.ifco.taas.device;
 
-import com.ifco.taas.device.dto.DeviceStatusResponse;
-import com.ifco.taas.telemetry.Telemetry;
+import com.ifco.taas.application.repository.DeviceStatusRepository;
+import com.ifco.taas.application.service.DeviceStatusService;
+import com.ifco.taas.domain.DeviceStatus;
+import com.ifco.taas.domain.Telemetry;
+import com.ifco.taas.infraestructure.rest.dto.DeviceStatusResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

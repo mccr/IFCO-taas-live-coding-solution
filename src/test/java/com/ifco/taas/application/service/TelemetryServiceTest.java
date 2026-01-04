@@ -1,7 +1,8 @@
-package com.ifco.taas.telemetry;
+package com.ifco.taas.application.service;
 
-import com.ifco.taas.kafka.TelemetryProducer;
-import com.ifco.taas.telemetry.dto.TelemetryRequest;
+import com.ifco.taas.application.repository.TelemetryRepository;
+import com.ifco.taas.domain.Telemetry;
+import com.ifco.taas.infraestructure.messaging.KafkaMessagePublisher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,7 +25,7 @@ class TelemetryServiceTest {
     private TelemetryRepository repository;
 
     @Mock
-    private TelemetryProducer producer;
+    private KafkaMessagePublisher messagePublisher;
 
     @InjectMocks
     private TelemetryService service;
@@ -33,23 +34,17 @@ class TelemetryServiceTest {
     void shouldRecordTelemetryAndSendMessage() {
         String deviceId = "1";
         Double measurement = 25.5;
-        String date = "2025-01-31T13:00:00Z";
+        Instant date = Instant.parse("2025-01-31T13:00:00Z");
 
-        TelemetryRequest request = TelemetryRequest.builder()
+        Telemetry savedTelemetry = Telemetry.builder()
                 .deviceId(deviceId)
                 .measurement(measurement)
                 .date(date)
                 .build();
 
-        Telemetry savedTelemetry = Telemetry.builder()
-                .deviceId(deviceId)
-                .measurement(measurement)
-                .date(Instant.parse(date))
-                .build();
-
         when(repository.save(any(Telemetry.class))).thenReturn(savedTelemetry);
 
-        Telemetry result = service.recordTelemetry(request);
+        Telemetry result = service.record(deviceId, measurement, date);
 
         assertThat(result).isNotNull();
         assertThat(deviceId).isEqualTo(result.getDeviceId());
@@ -57,6 +52,6 @@ class TelemetryServiceTest {
         assertThat(date).isEqualTo(result.getDate().toString());
 
         verify(repository, times(1)).save(any(Telemetry.class));
-        verify(producer, times(1)).sendTelemetry(savedTelemetry);
+        verify(messagePublisher, times(1)).publish(savedTelemetry);
     }
 }

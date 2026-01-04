@@ -1,7 +1,9 @@
-package com.ifco.taas.device;
+package com.ifco.taas.application.service;
 
-import com.ifco.taas.device.dto.DeviceStatusResponse;
-import com.ifco.taas.telemetry.Telemetry;
+import com.ifco.taas.application.repository.DeviceStatusRepository;
+import com.ifco.taas.domain.DeviceStatus;
+import com.ifco.taas.domain.Telemetry;
+import com.ifco.taas.infraestructure.rest.dto.DeviceStatusResponse;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
