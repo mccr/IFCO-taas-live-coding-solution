@@ -10,8 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -41,19 +40,20 @@ class TelemetryServiceTest {
         request.setMeasurement(measurement);
         request.setDate(date);
 
-        Telemetry savedTelemetry = new Telemetry();
-        savedTelemetry.setDeviceId(deviceId);
-        savedTelemetry.setMeasurement(measurement);
-        savedTelemetry.setDate(Instant.parse(date));
+        Telemetry savedTelemetry = Telemetry.builder()
+                .deviceId(deviceId)
+                .measurement(measurement)
+                .date(Instant.parse(date))
+                .build();
 
         when(repository.save(any(Telemetry.class))).thenReturn(savedTelemetry);
 
         Telemetry result = service.recordTelemetry(request);
 
-        assertNotNull(result);
-        assertEquals(deviceId, result.getDeviceId());
-        assertEquals(measurement, result.getMeasurement());
-        assertEquals(date, result.getDate().toString());
+        assertThat(result).isNotNull();
+        assertThat(deviceId).isEqualTo(result.getDeviceId());
+        assertThat(measurement).isEqualTo(result.getMeasurement());
+        assertThat(date).isEqualTo(result.getDate().toString());
 
         verify(repository, times(1)).save(any(Telemetry.class));
         verify(producer, times(1)).sendTelemetry(savedTelemetry);

@@ -17,10 +17,11 @@ public class TelemetryService {
     }
 
     public Telemetry recordTelemetry(TelemetryRequest request) {
-        Telemetry telemetry = new Telemetry();
-        telemetry.setDeviceId(request.getDeviceId());
-        telemetry.setMeasurement(request.getMeasurement());
-        telemetry.setDate(Instant.parse(request.getDate()));
+        Telemetry telemetry = Telemetry.builder()
+                .deviceId(request.getDeviceId())
+                .measurement(request.getMeasurement())
+                .date(Instant.parse(request.getDate()))
+                .build();
 
         Telemetry saved = repository.save(telemetry);
 

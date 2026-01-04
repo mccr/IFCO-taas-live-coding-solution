@@ -41,10 +41,11 @@ public class DeviceStatusServiceTest {
         latestMeasurement = 10.5;
         latestDate = Instant.parse("2025-01-31T13:00:00Z");
 
-        telemetry = new Telemetry();
-        telemetry.setDeviceId(deviceID);
-        telemetry.setMeasurement(latestMeasurement);
-        telemetry.setDate(latestDate);
+        telemetry = Telemetry.builder()
+                .deviceId(deviceID)
+                .measurement(latestMeasurement)
+                .date(latestDate)
+                .build();
 
         existingDeviceStatus = DeviceStatus.builder()
                 .deviceId(deviceID)

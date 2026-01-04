@@ -29,29 +29,30 @@ public class TelemetryControllerTest {
     @MockitoBean
     private TelemetryService service;
 
-    private String deviceID;
+    private String deviceId;
     private Double measurement;
     private String date;
     private TelemetryRequest request;
 
     @BeforeEach
     void setUp() {
-        deviceID = "1";
+        deviceId = "1";
         measurement = 25.5;
         date = "2025-01-31T13:00:00Z";
 
         request = new TelemetryRequest();
-        request.setDeviceId(deviceID);
+        request.setDeviceId(deviceId);
         request.setMeasurement(measurement);
         request.setDate(date);
     }
 
     @Test
     void shouldRecordTelemetrySuccessfully() throws Exception {
-        Telemetry telemetry = new Telemetry();
-        telemetry.setDeviceId(deviceID);
-        telemetry.setMeasurement(measurement);
-        telemetry.setDate(Instant.parse(date));
+        Telemetry telemetry = Telemetry.builder()
+                .deviceId(deviceId)
+                .measurement(measurement)
+                .date(Instant.parse(date))
+                .build();
 
         when(service.recordTelemetry(any(TelemetryRequest.class))).thenReturn(telemetry);
 
