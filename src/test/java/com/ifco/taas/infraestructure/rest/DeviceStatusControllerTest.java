@@ -1,7 +1,7 @@
 package com.ifco.taas.infraestructure.rest;
 
-import com.ifco.taas.application.service.DeviceStatusService;
-import com.ifco.taas.infraestructure.rest.dto.DeviceStatusResponse;
+import com.ifco.taas.application.usecase.GetDeviceStatusUseCase;
+import com.ifco.taas.domain.DeviceStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,25 +28,25 @@ public class DeviceStatusControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private DeviceStatusService service;
+    private GetDeviceStatusUseCase useCase;
 
     @Test
     void shouldGetAllDeviceStatusesSuccessfully() throws Exception {
-        DeviceStatusResponse deviceStatus1 = DeviceStatusResponse.builder()
+        DeviceStatus deviceStatus1 = DeviceStatus.builder()
                 .deviceId("1")
                 .latestMeasurement(25.5)
                 .latestDate(Instant.parse("2025-01-31T13:00:00Z"))
                 .updatedAt(LocalDateTime.now())
                 .build();
-        DeviceStatusResponse deviceStatus2 = DeviceStatusResponse.builder()
+        DeviceStatus deviceStatus2 = DeviceStatus.builder()
                 .deviceId("2")
                 .latestMeasurement(10.4)
                 .latestDate(Instant.parse("2025-01-30T11:00:00Z"))
                 .updatedAt(LocalDateTime.now())
                 .build();
-        List<DeviceStatusResponse> statuses = List.of(deviceStatus1, deviceStatus2);
+        List<DeviceStatus> statuses = List.of(deviceStatus1, deviceStatus2);
 
-        when(service.getAllDeviceStatuses()).thenReturn(statuses);
+        when(useCase.getAllDeviceStatuses()).thenReturn(statuses);
 
         mockMvc.perform(get("/device-status")
                         .accept(MediaType.APPLICATION_JSON))
@@ -62,7 +62,7 @@ public class DeviceStatusControllerTest {
 
     @Test
     void shouldReturnInternalServerErrorWhenServiceThrowsException() throws Exception {
-        when(service.getAllDeviceStatuses())
+        when(useCase.getAllDeviceStatuses())
                 .thenThrow(new RuntimeException("Database connection failed"));
 
         mockMvc.perform(get("/device-status")

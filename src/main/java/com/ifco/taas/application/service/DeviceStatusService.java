@@ -1,10 +1,10 @@
 package com.ifco.taas.application.service;
 
 import com.ifco.taas.application.repository.DeviceStatusRepository;
+import com.ifco.taas.application.usecase.GetDeviceStatusUseCase;
 import com.ifco.taas.application.usecase.UpdateDeviceStatusUseCase;
 import com.ifco.taas.domain.DeviceStatus;
 import com.ifco.taas.domain.Telemetry;
-import com.ifco.taas.infraestructure.rest.dto.DeviceStatusResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +12,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class DeviceStatusService implements UpdateDeviceStatusUseCase {
+public class DeviceStatusService implements UpdateDeviceStatusUseCase, GetDeviceStatusUseCase {
 
     private final DeviceStatusRepository repository;
 
@@ -31,11 +30,8 @@ public class DeviceStatusService implements UpdateDeviceStatusUseCase {
                 );
     }
 
-    public List<DeviceStatusResponse> getAllDeviceStatuses() {
-        return repository.findAll()
-                .stream()
-                .map(DeviceStatusResponse::from)
-                .collect(Collectors.toList());
+    public List<DeviceStatus> getAllDeviceStatuses() {
+        return repository.findAll();
     }
 
     private void updateExistingStatus(DeviceStatus existingStatus, Telemetry telemetry) {

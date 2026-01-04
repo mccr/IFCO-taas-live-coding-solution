@@ -3,7 +3,6 @@ package com.ifco.taas.application.service;
 import com.ifco.taas.application.repository.DeviceStatusRepository;
 import com.ifco.taas.domain.DeviceStatus;
 import com.ifco.taas.domain.Telemetry;
-import com.ifco.taas.infraestructure.rest.dto.DeviceStatusResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -107,14 +106,14 @@ public class DeviceStatusServiceTest {
     }
 
     @Test
-    void shouldFindAllDeviceStatusesAndMapToDeviceStatusResponse() {
+    void shouldFindAllDeviceStatusesAndMapToDeviceStatus() {
         when(repository.findAll()).thenReturn(List.of(existingDeviceStatus));
 
-        List<DeviceStatusResponse> listResponse = service.getAllDeviceStatuses();
+        List<DeviceStatus> listResponse = service.getAllDeviceStatuses();
 
         assertThat(listResponse).isNotNull();
 
-        DeviceStatusResponse response = listResponse.get(0);
+        DeviceStatus response = listResponse.get(0);
         assertThat(deviceID).isEqualTo(response.getDeviceId());
         assertThat(20.5).isEqualTo(response.getLatestMeasurement());
         assertThat(Instant.parse("2025-01-30T13:00:00Z")).isEqualTo(response.getLatestDate());
@@ -122,7 +121,7 @@ public class DeviceStatusServiceTest {
 
     @Test
     void shouldReturnEmptyListIfNoDeviceStatusFound() {
-        List<DeviceStatusResponse> listResponse = service.getAllDeviceStatuses();
+        List<DeviceStatus> listResponse = service.getAllDeviceStatuses();
 
         assertThat(listResponse).isEmpty();
     }
