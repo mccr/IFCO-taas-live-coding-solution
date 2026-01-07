@@ -19,6 +19,10 @@ The goals are:
 
 ## Running the APP
 
+<p align="center">
+  <img src="docs/diagram.drawio.png" alt="trlln coding challenge" width="80" height="80">
+</p>
+
 Check the [Getting Started](./GETTING_STARTED.md)
 
 once is running you can open a terminal and register the telemetry data:
@@ -88,3 +92,4 @@ so we can return early.
 ## Improvements
 
 - Error handling can be improved to catch explicit exceptions.
+- Put update logic inside domain model methods.
