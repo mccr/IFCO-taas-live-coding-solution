@@ -1,20 +1,16 @@
 package com.ifco.taas.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Value
+@Builder(toBuilder = true)
 public class DeviceStatus {
-    private String deviceId;
-    private Double latestMeasurement;
-    private Instant latestDate;
-    private LocalDateTime updatedAt;
+    String deviceId;
+    Double latestMeasurement;
+    Instant latestDate;
+    LocalDateTime updatedAt;
 }

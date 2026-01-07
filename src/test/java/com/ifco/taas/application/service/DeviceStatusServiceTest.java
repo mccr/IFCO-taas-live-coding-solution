@@ -30,7 +30,7 @@ public class DeviceStatusServiceTest {
     @InjectMocks
     private DeviceStatusService service;
 
-    private String deviceID;
+    private String deviceId;
     private Double latestMeasurement;
     private Instant latestDate;
     private Telemetry telemetry;
@@ -38,18 +38,18 @@ public class DeviceStatusServiceTest {
 
     @BeforeEach
     void setUp() {
-        deviceID = "1";
+        deviceId = "1";
         latestMeasurement = 10.5;
         latestDate = Instant.parse("2025-01-31T13:00:00Z");
 
         telemetry = Telemetry.builder()
-                .deviceId(deviceID)
+                .deviceId(deviceId)
                 .measurement(latestMeasurement)
                 .date(latestDate)
                 .build();
 
         existingDeviceStatus = DeviceStatus.builder()
-                .deviceId(deviceID)
+                .deviceId(deviceId)
                 .latestMeasurement(20.5)
                 .latestDate(Instant.parse("2025-01-30T13:00:00Z"))
                 .build();
@@ -57,21 +57,25 @@ public class DeviceStatusServiceTest {
 
     @Test
     void shouldUpdateLatestStatusIfExisting() {
-        when(repository.findById(deviceID)).thenReturn(Optional.of(existingDeviceStatus));
+        when(repository.findById(deviceId)).thenReturn(Optional.of(existingDeviceStatus));
 
         service.updateFrom(telemetry);
 
-        existingDeviceStatus.setLatestMeasurement(latestMeasurement);
-        existingDeviceStatus.setLatestDate(latestDate);
+        DeviceStatus updated = existingDeviceStatus.toBuilder()
+                .latestMeasurement(latestMeasurement)
+                .latestDate(latestDate)
+                .build();
 
-        verify(repository, times(1)).save(existingDeviceStatus);
+        verify(repository, times(1)).save(updated);
     }
 
     @Test
     void shouldSkipUpdateLatestStatusIfExistingDataIsMoreRecent() {
-        existingDeviceStatus.setLatestDate(Instant.parse("2025-01-31T15:00:00Z"));
+        DeviceStatus newerDeviceStatus = existingDeviceStatus.toBuilder()
+                .latestDate(Instant.parse("2025-01-31T15:00:00Z"))
+                .build();
 
-        when(repository.findById(deviceID)).thenReturn(Optional.of(existingDeviceStatus));
+        when(repository.findById(deviceId)).thenReturn(Optional.of(newerDeviceStatus));
 
         service.updateFrom(telemetry);
 
@@ -80,10 +84,12 @@ public class DeviceStatusServiceTest {
 
     @Test
     void shouldSkipUpdateLatestStatusIfExistingDataIsExactlyTheSame() {
-        existingDeviceStatus.setLatestMeasurement(latestMeasurement);
-        existingDeviceStatus.setLatestDate(latestDate);
+        DeviceStatus sameDeviceStatus = existingDeviceStatus.toBuilder()
+                .latestMeasurement(latestMeasurement)
+                .latestDate(latestDate)
+                .build();
 
-        when(repository.findById(deviceID)).thenReturn(Optional.of(existingDeviceStatus));
+        when(repository.findById(deviceId)).thenReturn(Optional.of(sameDeviceStatus));
 
         service.updateFrom(telemetry);
 
@@ -92,12 +98,12 @@ public class DeviceStatusServiceTest {
 
     @Test
     void shouldCreateLatestStatusIfNoExistingData() {
-        when(repository.findById(deviceID)).thenReturn(Optional.empty());
+        when(repository.findById(deviceId)).thenReturn(Optional.empty());
 
         service.updateFrom(telemetry);
 
         DeviceStatus deviceStatusSaved = DeviceStatus.builder()
-                .deviceId(deviceID)
+                .deviceId(deviceId)
                 .latestMeasurement(latestMeasurement)
                 .latestDate(latestDate)
                 .build();
@@ -114,7 +120,7 @@ public class DeviceStatusServiceTest {
         assertThat(listResponse).isNotNull();
 
         DeviceStatus response = listResponse.get(0);
-        assertThat(deviceID).isEqualTo(response.getDeviceId());
+        assertThat(deviceId).isEqualTo(response.getDeviceId());
         assertThat(20.5).isEqualTo(response.getLatestMeasurement());
         assertThat(Instant.parse("2025-01-30T13:00:00Z")).isEqualTo(response.getLatestDate());
     }

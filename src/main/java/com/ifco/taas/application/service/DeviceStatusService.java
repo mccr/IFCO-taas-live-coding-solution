@@ -52,13 +52,15 @@ public class DeviceStatusService implements UpdateDeviceStatusUseCase, GetDevice
         }
     }
 
-    private void updateDeviceStatus(DeviceStatus status, Telemetry telemetry) {
+    private void updateDeviceStatus(DeviceStatus existingStatus, Telemetry telemetry) {
         log.info("Updating device status for device: {}", telemetry.getDeviceId());
 
-        status.setLatestMeasurement(telemetry.getMeasurement());
-        status.setLatestDate(telemetry.getDate());
+        DeviceStatus updated = existingStatus.toBuilder()
+                .latestMeasurement(telemetry.getMeasurement())
+                .latestDate(telemetry.getDate())
+                .build();
 
-        repository.save(status);
+        repository.save(updated);
     }
 
     private void createDeviceStatus(Telemetry telemetry) {

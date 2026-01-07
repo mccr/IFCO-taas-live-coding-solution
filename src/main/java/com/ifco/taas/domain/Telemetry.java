@@ -1,21 +1,17 @@
 package com.ifco.taas.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-@Data
+@Value
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class Telemetry {
-    private Long id;
-    private String deviceId;
-    private Double measurement;
-    private Instant date;
-    private LocalDateTime createdAt;
+    Long id;
+    String deviceId;
+    Double measurement;
+    Instant date;
+    LocalDateTime createdAt;
 }
