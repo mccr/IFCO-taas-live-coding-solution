@@ -71,6 +71,11 @@ actions.
 if there is a duplicate, the update is skipped, and it logs a warning to keep track of this, a potential improvement
 would be having a unique constraint in the DB and handling it as an error.
 
+for both of these edge cases, I would also take into account from a product perspective what is the preferred approach,
+for event driven systems sometimes it makes sense to record everything that happens, or we can decide to treat these
+cases as errors,
+so we can return early.
+
 ## Bonus points
 
 1. Using Hexagonal Architecture or any similar (Onion, Clean, etc.) ✅
