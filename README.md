@@ -20,7 +20,7 @@ The goals are:
 ## Running the APP
 
 <p align="center">
-  <img src="docs/diagram.drawio.png" alt="trlln coding challenge" width="80" height="80">
+  <img src="docs/diagram.drawio.png" alt="diagram">
 </p>
 
 Check the [Getting Started](./GETTING_STARTED.md)
